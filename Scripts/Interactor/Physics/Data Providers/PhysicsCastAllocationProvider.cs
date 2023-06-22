@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class PhysicsCastAllocationProvider<T> : MonoBehaviour, IPhysicsCastAllocationProvider<T>
 {
@@ -9,13 +10,7 @@ public class PhysicsCastAllocationProvider<T> : MonoBehaviour, IPhysicsCastAlloc
         set
         {
             _size = value;
-            var temp = new T[_size];
-            int minLength = Mathf.Min(_physicsObjectsMemory.Length, temp.Length);
-
-            for (int i = 0; i < minLength; i++)
-                temp[i] = _physicsObjectsMemory[i];
-
-            _physicsObjectsMemory = temp;
+            Array.Resize(ref _physicsObjectsMemory, _size);
         }
     }
 

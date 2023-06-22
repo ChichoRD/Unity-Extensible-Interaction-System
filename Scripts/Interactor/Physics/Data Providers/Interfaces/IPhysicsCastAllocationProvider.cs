@@ -1,5 +1,4 @@
-﻿public interface IPhysicsCastAllocationProvider<T>
+﻿public interface IPhysicsCastAllocationProvider<T> : IPhysicsAllocationProvider
 {
-    bool UseNonAllocMemory { get; }
     T[] PhysicsObjectsMemory { get; }
 }
