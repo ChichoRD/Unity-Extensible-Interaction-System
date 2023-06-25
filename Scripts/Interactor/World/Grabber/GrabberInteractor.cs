@@ -9,10 +9,12 @@ public class GrabberInteractor : MonoBehaviour, IGrabberInteractor
 
     [SerializeField] private Transform[] _grabParents;
     [SerializeField] private float _grabTime = 0.25f;
+    [SerializeField] private bool _grabInConstantTime;
     [SerializeField] private bool _interchangeOnGrabOverflow;
     private Queue<Transform> _occuppiedGrabParents;
     private bool RoomForGrabbing => _occuppiedGrabParents.Count < _grabParents.Length;
     public float GrabSpeed => 1.0f / _grabTime;
+    public bool GrabInConstantTime => _grabInConstantTime;
 
     private void Awake() => _occuppiedGrabParents = new Queue<Transform>(_grabParents.Length);
 
@@ -29,6 +31,11 @@ public class GrabberInteractor : MonoBehaviour, IGrabberInteractor
         {
             Transform grabParent = _occuppiedGrabParents.Dequeue();
             _occuppiedGrabParents.Enqueue(grabParent);
+
+            var droppable = grabParent.GetComponentInChildren<DroppableInteractable>();
+            if (droppable == null) return grabParent;
+
+            droppable.Interact(this);
             return grabParent;
         }
 

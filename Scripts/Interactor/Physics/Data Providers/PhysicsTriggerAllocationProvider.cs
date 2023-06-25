@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class PhysicsTriggerAllocationProvider<T> : MonoBehaviour, IPhysicsTriggerAllocationProvider<T> where T : Component
+[Serializable]
+public class PhysicsTriggerAllocationProvider<T> : /*MonoBehaviour,*/ IPhysicsTriggerAllocationProvider<T> where T : Component
 {
     [SerializeField] private bool _useNonAllocMemory = false;
     public bool UseNonAllocMemory => _useNonAllocMemory;
