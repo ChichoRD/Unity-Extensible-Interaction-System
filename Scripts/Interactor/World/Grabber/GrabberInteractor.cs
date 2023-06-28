@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class GrabberInteractor : MonoBehaviour, IGrabberInteractor
@@ -11,36 +12,42 @@ public class GrabberInteractor : MonoBehaviour, IGrabberInteractor
     [SerializeField] private float _grabTime = 0.25f;
     [SerializeField] private bool _grabInConstantTime;
     [SerializeField] private bool _interchangeOnGrabOverflow;
-    private Queue<Transform> _occuppiedGrabParents;
+    private Dictionary<IInteractable, Transform> _occuppiedGrabParents;
     private bool RoomForGrabbing => _occuppiedGrabParents.Count < _grabParents.Length;
     public float GrabSpeed => 1.0f / _grabTime;
     public bool GrabInConstantTime => _grabInConstantTime;
 
-    private void Awake() => _occuppiedGrabParents = new Queue<Transform>(_grabParents.Length);
+    private void Awake() => _occuppiedGrabParents = new Dictionary<IInteractable, Transform>();
 
-    public Transform GetGrabParent()
+    public Transform GetGrabParent(IInteractable interactable)
     {
         if (RoomForGrabbing)
         {
             Transform grabParent = _grabParents[_occuppiedGrabParents.Count];
-            _occuppiedGrabParents.Enqueue(grabParent);
+            _occuppiedGrabParents.Add(interactable, grabParent);
             return grabParent;
         }
 
         if (_interchangeOnGrabOverflow)
         {
-            Transform grabParent = _occuppiedGrabParents.Dequeue();
-            _occuppiedGrabParents.Enqueue(grabParent);
+            IInteractable firstInteractable = _occuppiedGrabParents.Last().Key;
+            FreeGrabParent(firstInteractable, out Transform freeGrabParent);
+            _occuppiedGrabParents.Add(interactable, freeGrabParent);
 
-            var droppable = grabParent.GetComponentInChildren<DroppableInteractable>();
-            if (droppable == null) return grabParent;
+            if (firstInteractable is not IDroppableInteractable droppable) return freeGrabParent;
 
             droppable.Interact(this);
-            return grabParent;
+            return freeGrabParent;
         }
 
         return null;
     }
 
+    public bool FreeGrabParent(IInteractable interactable, out Transform grabParent)
+    {
+        return _occuppiedGrabParents.Remove(interactable, out grabParent);
+    }
+
     public IEnumerable<IInteractable> GetInteractables() => Interactor.GetInteractables();
+
 }

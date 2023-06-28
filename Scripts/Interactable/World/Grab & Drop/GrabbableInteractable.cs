@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class GrabbableInteractable : MonoBehaviour, ICoroutineInteractable
+public class GrabbableInteractable : MonoBehaviour, IGrabbableInteractable
 {
     [SerializeField] private Transform _transform;
     [field: SerializeField] public UnityEvent<IInteractor> OnInteracted { get; private set; }
@@ -17,7 +17,7 @@ public class GrabbableInteractable : MonoBehaviour, ICoroutineInteractable
     {
         if (interactor is not IGrabberInteractor grabber) yield break;
 
-        var grabParent = grabber.GetGrabParent();
+        var grabParent = grabber.GetGrabParent(this);
         if (grabParent == null) yield break;
 
         yield return StartCoroutine(grabber.GrabInConstantTime ?
@@ -81,24 +81,3 @@ public class GrabbableInteractable : MonoBehaviour, ICoroutineInteractable
         _transform.SetParent(grabberParent);
     }
 }
-
-public class PhysicsGrabbableInteractable2D : MonoBehaviour, ICoroutineInteractable
-{
-    [SerializeField] private GrabbableInteractable _grabbableInteractable;
-    [SerializeField] private Rigidbody2D _rigidbody2D;
-
-    public UnityEvent<IInteractor> OnInteracted => ((IInteractable)_grabbableInteractable).OnInteracted;
-
-    public void Interact(IInteractor interactor)
-    {
-        StartCoroutine(InteractCoroutine(interactor));
-    }
-
-    public IEnumerator InteractCoroutine(IInteractor interactor)
-    {
-        _rigidbody2D.isKinematic = true;
-        yield return ((ICoroutineInteractable)_grabbableInteractable).InteractCoroutine(interactor);
-    }
-}
-
-//TODO - Create an interface for all common rigidbody properties, 2D and 3D
