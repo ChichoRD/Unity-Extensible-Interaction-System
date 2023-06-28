@@ -9,7 +9,7 @@ public class GrabberInteractor : MonoBehaviour, IGrabberInteractor
     private IInteractor Interactor => _interactorObject as IInteractor;
 
     [SerializeField] private Transform[] _grabParents;
-    [SerializeField] private float _grabTime = 0.25f;
+    [SerializeField] [Min(0.0f)] private float _grabTime = 0.25f;
     [SerializeField] private bool _grabInConstantTime;
     [SerializeField] private bool _interchangeOnGrabOverflow;
     private Dictionary<IInteractable, Transform> _occuppiedGrabParents;

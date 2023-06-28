@@ -1,0 +1,34 @@
+{
+    "name": "Interaction Controls",
+    "maps": [
+        {
+            "name": "Player",
+            "id": "5aa42131-474c-42c8-a39b-87d6f0f8ff49",
+            "actions": [
+                {
+                    "name": "Interact",
+                    "type": "Button",
+                    "id": "23502b15-d678-4e92-a2e4-fcf99e031611",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "f905b903-1a17-4314-8c4c-948bac535541",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

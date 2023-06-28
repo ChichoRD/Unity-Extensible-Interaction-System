@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using Object = UnityEngine.Object;
+using Random = UnityEngine.Random;
 
 public abstract class RaycastDataProvider<T> : MonoBehaviour, IRaycastDataProvider<T>
 {
@@ -24,4 +25,21 @@ public abstract class RaycastDataProvider<T> : MonoBehaviour, IRaycastDataProvid
     public T[] PhysicsObjectsMemory => ((IPhysicsCastAllocationProvider<T>)_allocationProvider).PhysicsObjectsMemory;
 
     public abstract Func<T[]> GetRaycastFunction(); 
+
+    private void OnDrawGizmosSelected()
+    {
+        if (DirectionProvider == null) return;
+
+        Gizmos.color = Color.yellow;
+        var capsule = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+        Mesh capsuleMesh = capsule.GetComponent<MeshFilter>().sharedMesh;
+
+        Vector3 capsuleMidPoint = InteractionPosition + 0.5f * InteractionDistance * InteractionDirection;
+        Vector3 capsuleScale = new Vector3(_raycastThickness, InteractionDistance * 0.5f, _raycastThickness);
+        Quaternion capsuleRotation = Quaternion.LookRotation(Vector3.Cross(InteractionDirection, Random.onUnitSphere), InteractionDirection);
+
+        Gizmos.DrawWireMesh(capsuleMesh, capsuleMidPoint, capsuleRotation, capsuleScale);
+        //Gizmos.DrawRay(InteractionPosition, InteractionDirection * InteractionDistance);
+        DestroyImmediate(capsule);
+    }
 }
