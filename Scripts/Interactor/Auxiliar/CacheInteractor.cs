@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class CacheInteractor : MonoBehaviour, IInteractor
+public class CacheInteractor : MonoBehaviour, IUpdateableInteractor
 {
     private IEnumerable<IInteractable> _interactables = new IInteractable[0];
 
@@ -11,5 +11,5 @@ public class CacheInteractor : MonoBehaviour, IInteractor
     private IInteractor Interactor => _interactorObject as IInteractor;
 
     public IEnumerable<IInteractable> GetInteractables() => _interactables;
-    public int SetInteractables() => (_interactables = Interactor.GetInteractables()).Count();
+    public int UpdateInteractablesCollection() => (_interactables = Interactor.GetInteractables()).Count();
 }

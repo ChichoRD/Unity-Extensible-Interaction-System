@@ -4,16 +4,17 @@ using UnityEngine.Events;
 public class DroppableInteractable : MonoBehaviour, IDroppableInteractable
 {
     [SerializeField] private Transform _transform;
-    [field: SerializeField] public UnityEvent<IInteractor> OnInteracted { get; private set; }
+    [field: SerializeField] public UnityEvent<IInteractionHandler> OnInteracted { get; private set; }
 
-    public void Interact(IInteractor interactor)
+    public bool Interact(IInteractionHandler interactionHandler)
     {
         Drop();
 
-        if (interactor is IGrabberInteractor grabber)
+        if (interactionHandler is IGrabInteractionHandler grabber)
             grabber.FreeGrabParent(this, out _);
 
-        OnInteracted?.Invoke(interactor);
+        OnInteracted?.Invoke(interactionHandler);
+        return true;
     }
 
     public void Drop()

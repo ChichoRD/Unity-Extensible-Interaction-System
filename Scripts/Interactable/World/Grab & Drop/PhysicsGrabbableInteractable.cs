@@ -11,17 +11,19 @@ public class PhysicsGrabbableInteractable : MonoBehaviour, IGrabbableInteractabl
     [SerializeField] private Object _rigidbodyAccessorObject;
     private IRigidbodyAccessor RigidbodyAccessor => _rigidbodyAccessorObject as IRigidbodyAccessor;
 
-    public UnityEvent<IInteractor> OnInteracted => GrabbableInteractable.OnInteracted;
+    public UnityEvent<IInteractionHandler> OnInteracted => GrabbableInteractable.OnInteracted;
 
-    public void Interact(IInteractor interactor)
+    public bool Interact(IInteractionHandler interactionHandler)
     {
-        StartCoroutine(InteractCoroutine(interactor));
+        if (interactionHandler is not IGrabInteractionHandler) return false;
+        StartCoroutine(InteractCoroutine(interactionHandler));
+        return true;
     }
 
-    public IEnumerator InteractCoroutine(IInteractor interactor)
+    public IEnumerator InteractCoroutine(IInteractionHandler interactionHandler)
     {
         RigidbodyAccessor.IsKinematic = true;
-        yield return GrabbableInteractable.InteractCoroutine(interactor);
+        yield return GrabbableInteractable.InteractCoroutine(interactionHandler);
     }
 
     public IEnumerator GrabCoroutine(Transform grabberParent, System.Func<float, float> getGrabSpeed)

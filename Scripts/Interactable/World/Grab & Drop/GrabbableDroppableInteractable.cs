@@ -15,7 +15,7 @@ public class GrabbableDroppableInteractable : MonoBehaviour, IGrabbableInteracta
     private readonly IInteractable[] _interactables = new IInteractable[2];
     private int _interactableIndex;
 
-    [field: SerializeField] public UnityEvent<IInteractor> OnInteracted { get; private set; }
+    [field: SerializeField] public UnityEvent<IInteractionHandler> OnInteracted { get; private set; }
 
     private void Awake()
     {
@@ -24,6 +24,8 @@ public class GrabbableDroppableInteractable : MonoBehaviour, IGrabbableInteracta
 
         _interactables[0] = GrabbableInteractable;
         _interactables[1] = DroppableInteractable;
+
+        OnInteracted.AddListener((_) => _interactableIndex = ++_interactableIndex % _interactables.Length);
     }
 
     public IEnumerator GrabCoroutine(Transform grabberParent, System.Func<float, float> getGrabSpeed)
@@ -36,16 +38,12 @@ public class GrabbableDroppableInteractable : MonoBehaviour, IGrabbableInteracta
         return GrabbableInteractable.GrabCoroutine(grabberParent, grabTotalTime);
     }
 
-    public IEnumerator InteractCoroutine(IInteractor interactor)
+    public IEnumerator InteractCoroutine(IInteractionHandler interactionHandler)
     {
-        return GrabbableInteractable.InteractCoroutine(interactor);
+        return GrabbableInteractable.InteractCoroutine(interactionHandler);
     }
 
-    public void Interact(IInteractor interactor)
-    {
-        _interactables[_interactableIndex].Interact(interactor);
-        _interactableIndex = ++_interactableIndex % _interactables.Length;
-    }
+    public bool Interact(IInteractionHandler interactionHandler) => _interactables[_interactableIndex].Interact(interactionHandler);
 
     public void Drop()
     {

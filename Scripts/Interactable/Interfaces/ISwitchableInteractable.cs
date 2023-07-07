@@ -2,6 +2,6 @@
 
 public interface ISwitchableInteractable : IInteractable
 {
-    void StopInteracting(IInteractor interactor);
-    UnityEvent<IInteractor> OnStoppedInteracting { get; }
+    bool StopInteracting(IInteractionHandler interactionHandler);
+    UnityEvent<IInteractionHandler> OnStoppedInteracting { get; }
 }

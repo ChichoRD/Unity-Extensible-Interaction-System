@@ -3,7 +3,11 @@ using UnityEngine.Events;
 
 public class EventRaiserInteractable : MonoBehaviour, IInteractable
 {
-    [field: SerializeField] public UnityEvent<IInteractor> OnInteracted { get; private set; }
+    [field: SerializeField] public UnityEvent<IInteractionHandler> OnInteracted { get; private set; }
 
-    public void Interact(IInteractor interactor) => OnInteracted?.Invoke(interactor);
+    public bool Interact(IInteractionHandler interactionHandler)
+    {
+        OnInteracted?.Invoke(interactionHandler);
+        return true;
+    }
 }

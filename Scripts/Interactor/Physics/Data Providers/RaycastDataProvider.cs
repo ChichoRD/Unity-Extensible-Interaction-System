@@ -28,7 +28,7 @@ public abstract class RaycastDataProvider<T> : MonoBehaviour, IRaycastDataProvid
 
     private void OnDrawGizmosSelected()
     {
-        if (DirectionProvider == null) return;
+        if (DirectionProvider == null || RadialCastDataProvider == null) return;
 
         Gizmos.color = Color.yellow;
         var capsule = GameObject.CreatePrimitive(PrimitiveType.Capsule);

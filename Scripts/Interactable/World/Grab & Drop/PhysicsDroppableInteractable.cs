@@ -9,12 +9,12 @@ public class PhysicsDroppableInteractable : MonoBehaviour, IDroppableInteractabl
     [RequireInterface(typeof(IRigidbodyAccessor))]
     [SerializeField] private Object _rigidbodyAccessorObject;
     private IRigidbodyAccessor RigidbodyAccessor => _rigidbodyAccessorObject as IRigidbodyAccessor;
-    public UnityEvent<IInteractor> OnInteracted => DroppableInteractable.OnInteracted;
+    public UnityEvent<IInteractionHandler> OnInteracted => DroppableInteractable.OnInteracted;
 
-    public void Interact(IInteractor interactor)
+    public bool Interact(IInteractionHandler interactionHandler)
     {
         RigidbodyAccessor.IsKinematic = false;
-        DroppableInteractable.Interact(interactor);
+        return DroppableInteractable.Interact(interactionHandler);
     }
 
     public void Drop()

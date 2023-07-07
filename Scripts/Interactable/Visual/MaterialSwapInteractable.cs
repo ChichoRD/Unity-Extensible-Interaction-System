@@ -6,19 +6,21 @@ public class MaterialSwapInteractable : MonoBehaviour, ISwitchableInteractable
     [SerializeField] private Renderer _renderer;
     [SerializeField] private Material _material;
     private Material _originalMaterial;
-    [field: SerializeField] public UnityEvent<IInteractor> OnInteracted { get; private set; }
-    [field: SerializeField] public UnityEvent<IInteractor> OnStoppedInteracting { get; private set; }
+    [field: SerializeField] public UnityEvent<IInteractionHandler> OnInteracted { get; private set; }
+    [field: SerializeField] public UnityEvent<IInteractionHandler> OnStoppedInteracting { get; private set; }
 
-    public void Interact(IInteractor interactor)
+    public bool Interact(IInteractionHandler interactionHandler)
     {
         SwapToNewMaterial();
-        OnInteracted?.Invoke(interactor);
+        OnInteracted?.Invoke(interactionHandler);
+        return true;
     }
 
-    public void StopInteracting(IInteractor interactor)
+    public bool StopInteracting(IInteractionHandler interactionHandler)
     {
         SwapToOriginalMaterial();
-        OnStoppedInteracting?.Invoke(interactor);
+        OnStoppedInteracting?.Invoke(interactionHandler);
+        return true;
     }
 
     private void SwapToNewMaterial()

@@ -2,6 +2,6 @@ using UnityEngine.Events;
 
 public interface IInteractable
 {
-    void Interact(IInteractor interactor);
-    UnityEvent<IInteractor> OnInteracted { get; }
+    bool Interact(IInteractionHandler interactionHandler);
+    UnityEvent<IInteractionHandler> OnInteracted { get; }
 }

@@ -2,5 +2,5 @@
 
 public interface ICoroutineInteractable : IInteractable
 {
-    IEnumerator InteractCoroutine(IInteractor interactor);
+    IEnumerator InteractCoroutine(IInteractionHandler interactionHandler);
 }
