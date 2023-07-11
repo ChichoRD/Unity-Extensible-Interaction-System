@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class RigidbodyAccessor2D : MonoBehaviour, IRigidbodyAccessor
 {
@@ -81,5 +82,15 @@ public class RigidbodyAccessor2D : MonoBehaviour, IRigidbodyAccessor
     public void MoveRotation(Quaternion rotation)
     {
         _rigidbody2D.MoveRotation(rotation.eulerAngles.z);
+    }
+
+    public int GetAttachedColliders(out IColliderAccessor[] attachedColliders)
+    {
+        return (attachedColliders = GetComponentsInChildren<IColliderAccessor>()).Length;
+    }
+
+    public int GetAttachedColliders(out List<IColliderAccessor> attachedColliders)
+    {
+        return (attachedColliders = new List<IColliderAccessor>(GetComponentsInChildren<IColliderAccessor>())).Count;
     }
 }

@@ -12,14 +12,27 @@ public class InteractionGroupObject : ScriptableObject, IInteractionRequester
     private IInteractor _interactor;
     private readonly List<IInteractionHandler> _interactionHandlers = new List<IInteractionHandler>();
 
-    [field: SerializeField] public UnityEvent OnInteracted { get; private set; }
+    [field: SerializeField] public UnityEvent<IInteractable> OnInteracted { get; private set; }
     public void Interact()
     {
         var interactables = _interactor.GetInteractables();
-        foreach (var interactionHandler in _interactionHandlers)
-            foreach (var interactable in interactables)
-                interactionHandler.OnInteractionRequest(interactable);
-        OnInteracted?.Invoke();
+        var handlers = _interactionHandlers.Append(null);
+        List<IInteractable> successfulInteractables = new List<IInteractable>();
+
+        foreach (var interactable in interactables)
+        {
+            foreach (var interactionHandler in handlers)
+            {
+                if (interactable.Interact(interactionHandler))
+                {
+                    successfulInteractables.Add(interactable);
+                    break;
+                }
+            }
+        }
+
+        foreach (var interactable in successfulInteractables)
+            OnInteracted?.Invoke(interactable);
     }
 
     public void AddInteractionHandlers(params IInteractionHandler[] interactionHandlers) => _interactionHandlers.AddRange(interactionHandlers);

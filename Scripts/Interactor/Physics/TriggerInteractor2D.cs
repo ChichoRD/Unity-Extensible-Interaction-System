@@ -11,7 +11,7 @@ public class TriggerInteractor2D : MonoBehaviour, IInteractor
     public IEnumerable<IInteractable> GetInteractables()
     {
         return TriggerDataProvider.PhysicsObjectsMemory
-            .Select(collider => collider.gameObject.GetComponent<IInteractable>())
+            .SelectMany(collider => collider.gameObject.GetComponents<IInteractable>())
             .Where(interactable => interactable != null);
     }
 

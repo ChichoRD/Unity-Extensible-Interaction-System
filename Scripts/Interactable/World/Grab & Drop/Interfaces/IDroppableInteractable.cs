@@ -1,4 +1,6 @@
-﻿public interface IDroppableInteractable : IInteractable
+﻿using UnityEngine;
+
+public interface IDroppableInteractable : IInteractable
 {
-    void Drop();
+    Transform Transform { get; }
 }

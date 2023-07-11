@@ -1,4 +1,4 @@
 public interface IInteractionHandler
 {
-    bool OnInteractionRequest(IInteractable interactable);
+    //bool OnInteractionRequest(IInteractable interactable);
 }

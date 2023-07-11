@@ -2,6 +2,6 @@ using UnityEngine.Events;
 
 public interface IInteractionRequester
 {
-    UnityEvent OnInteracted { get; }
+    UnityEvent<IInteractable> OnInteracted { get; }
     void Interact();
 }

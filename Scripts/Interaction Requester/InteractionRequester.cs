@@ -12,14 +12,27 @@ public class InteractionRequester : MonoBehaviour, IInteractionRequester
     [SerializeField] private Object[] _interactionHandlerObjects;
     private IEnumerable<IInteractionHandler> InteractionHandlers => _interactionHandlerObjects.Cast<IInteractionHandler>();
 
-    [field: SerializeField] public UnityEvent OnInteracted { get; private set; }
+    [field: SerializeField] public UnityEvent<IInteractable> OnInteracted { get; private set; }
 
     public void Interact()
     {
         var interactables = Interactor.GetInteractables();
-        foreach (var interactionHandler in InteractionHandlers)
-            foreach (var interactable in interactables)
-                interactionHandler.OnInteractionRequest(interactable);
-        OnInteracted?.Invoke();
+        var handlers = InteractionHandlers.Append(null);
+        List<IInteractable> successfulInteractables = new List<IInteractable>();
+
+        foreach (var interactable in interactables)
+        {
+            foreach (var interactionHandler in handlers)
+            {
+                if (interactable.Interact(interactionHandler))
+                {
+                    successfulInteractables.Add(interactable);
+                    break;
+                }
+            }
+        }
+
+        foreach (var interactable in successfulInteractables)
+            OnInteracted?.Invoke(interactable);
     }
 }

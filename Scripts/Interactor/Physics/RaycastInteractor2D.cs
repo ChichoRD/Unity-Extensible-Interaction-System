@@ -12,7 +12,7 @@ public class RaycastInteractor2D : MonoBehaviour, IInteractor
     public IEnumerable<IInteractable> GetInteractables()
     {
         return RaycastDataProvider.GetRaycastFunction()()
-            .Select(hit => hit.collider.gameObject.GetComponent<IInteractable>())
+            .SelectMany(hit => hit.collider.gameObject.GetComponents<IInteractable>())
             .Where(interactable => interactable != null);
     }
 }

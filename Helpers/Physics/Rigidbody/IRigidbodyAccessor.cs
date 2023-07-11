@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public interface IRigidbodyAccessor
@@ -22,4 +23,7 @@ public interface IRigidbodyAccessor
 
     void MovePosition(Vector3 position);
     void MoveRotation(Quaternion rotation);
+
+    int GetAttachedColliders(out IColliderAccessor[] attachedColliders);
+    int GetAttachedColliders(out List<IColliderAccessor> attachedColliders);
 }

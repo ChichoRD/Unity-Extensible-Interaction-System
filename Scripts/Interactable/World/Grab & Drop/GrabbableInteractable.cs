@@ -6,6 +6,7 @@ using UnityEngine.Events;
 public class GrabbableInteractable : MonoBehaviour, IGrabbableInteractable
 {
     [SerializeField] private Transform _transform;
+    public Transform Transform => _transform;
     [field: SerializeField] public UnityEvent<IInteractionHandler> OnInteracted { get; private set; }
 
     public bool Interact(IInteractionHandler interactionHandler)
@@ -20,8 +21,8 @@ public class GrabbableInteractable : MonoBehaviour, IGrabbableInteractable
     {
         if (interactionHandler is not IGrabInteractionHandler grabber) yield break;
 
-        var grabParent = grabber.GetGrabParent(this);
-        if (grabParent == null) yield break;
+        if (!grabber.TryGetGrabParent(this, out var grabParent) &&
+            !(grabber.TryAssignGrabParent(this) && grabber.TryGetGrabParent(this, out grabParent))) yield break;
 
         yield return StartCoroutine(grabber.GrabInConstantTime ?
                                     GrabCoroutine(grabParent, 1.0f / grabber.GrabSpeed) :

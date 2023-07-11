@@ -6,16 +6,18 @@ public class InterchangeableGrabInteractionHandler : MonoBehaviour, IGrabInterac
     [RequireInterface(typeof(IGrabInteractionHandler))]
     [SerializeField] private Object _grabInteractionHandlerObject;
     private IGrabInteractionHandler GrabInteractionHandler => _grabInteractionHandlerObject as IGrabInteractionHandler;
+    private IInteractable _lastInteractable;
 
     public float GrabSpeed => GrabInteractionHandler.GrabSpeed;
     public bool GrabInConstantTime => GrabInteractionHandler.GrabInConstantTime;
 
-    public bool FreeGrabParent(IInteractable interactable, out Transform grabParent) => GrabInteractionHandler.FreeGrabParent(interactable, out grabParent);
-
-    public Transform GetGrabParent(IInteractable interactable) => GrabInteractionHandler.GetGrabParent(interactable);
-
-    public bool OnInteractionRequest(IInteractable interactable) => GrabInteractionHandler.OnInteractionRequest(interactable) ||
-                                                                        (_interchangeOnGrabFail &&
-                                                                        FreeGrabParent(interactable /*Last added, impl*/, out _) &&
-                                                                        GrabInteractionHandler.OnInteractionRequest(interactable));
+    public bool TryGetGrabParent(IInteractable interactable, out Transform grabParent) => GrabInteractionHandler.TryGetGrabParent(interactable, out grabParent);
+    public bool TryFreeGrabParent(IInteractable interactable, out Transform grabParent) => GrabInteractionHandler.TryFreeGrabParent(interactable, out grabParent)
+                                                                                           && interactable is Component component
+                                                                                           && component.gameObject.TryGetComponent(out IDroppableInteractable droppable)
+                                                                                           && droppable.Interact(this);
+    public bool TryAssignGrabParent(IInteractable interactable) => (GrabInteractionHandler.TryAssignGrabParent(interactable)
+                                                                   && (_lastInteractable = interactable) != null)
+                                                                   || (TryFreeGrabParent(_lastInteractable, out _)
+                                                                   && TryAssignGrabParent(interactable));
 }

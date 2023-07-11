@@ -4,6 +4,7 @@ public interface IGrabInteractionHandler : IInteractionHandler
 {
     float GrabSpeed { get; }
     bool GrabInConstantTime { get; }
-    Transform GetGrabParent(IInteractable interactable);
-    bool FreeGrabParent(IInteractable interactable, out Transform grabParent);
+    bool TryGetGrabParent(IInteractable interactable, out Transform grabParent);
+    bool TryAssignGrabParent(IInteractable interactable);
+    bool TryFreeGrabParent(IInteractable interactable, out Transform grabParent);
 }
