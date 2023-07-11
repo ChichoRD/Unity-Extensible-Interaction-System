@@ -8,7 +8,7 @@ public class RegisterInteractor : MonoBehaviour, IInteractor
     [SerializeField] private Object _interactionRequesterObject;
     private IInteractionRequester InteractionRequester => _interactionRequesterObject as IInteractionRequester;
 
-    [SerializeReference] private /*readonly*/ List<IInteractable> _register = new List<IInteractable>();
+    private readonly List<IInteractable> _register = new List<IInteractable>();
 
     private void Awake() => InteractionRequester?.OnInteracted.AddListener(OnInteracted);
 

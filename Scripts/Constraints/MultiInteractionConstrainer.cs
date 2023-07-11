@@ -12,3 +12,5 @@ public class MultiInteractionConstrainer : MonoBehaviour, IInteractionConstraine
 
     public bool CanInteract(IInteractor interactor) => Constrainers.Count(constrainer => constrainer.CanInteract(interactor)) / Constrainers.Count() >= _constraintMeetingPercentage;
 }
+
+//TODO - Rethink Constrainers and implement interactable layer system
