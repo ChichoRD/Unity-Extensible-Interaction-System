@@ -3,6 +3,9 @@ using UnityEngine.Events;
 
 public class MaterialSwapInteractable : MonoBehaviour, ISwitchableInteractable
 {
+    [SerializeField] private InteractionLayer _interactionLayer = InteractionLayer.InteractionLayer0;
+    public InteractionLayer InteractionLayer { get => _interactionLayer; set => _interactionLayer = value; }
+
     [SerializeField] private Renderer _renderer;
     [SerializeField] private Material _material;
     private Material _originalMaterial;

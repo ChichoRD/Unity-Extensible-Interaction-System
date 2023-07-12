@@ -5,13 +5,21 @@ using UnityEngine.Events;
 
 public class GrabbableInteractable : MonoBehaviour, IGrabbableInteractable
 {
+    [SerializeField] private InteractionLayer _interactionLayer = InteractionLayer.InteractionLayer0;
+    public InteractionLayer InteractionLayer { get => _interactionLayer; set => _interactionLayer = value; }
+
     [SerializeField] private Transform _transform;
     public Transform Transform => _transform;
     [field: SerializeField] public UnityEvent<IInteractionHandler> OnInteracted { get; private set; }
+    [field: SerializeField] public UnityEvent<IInteractionHandler> OnFailedToInteract { get; private set; }
 
     public bool Interact(IInteractionHandler interactionHandler)
     {
-        if (interactionHandler is not IGrabInteractionHandler) return false;
+        if (!CanInteract(interactionHandler))
+        {
+            OnFailedToInteract?.Invoke(interactionHandler);
+            return false;
+        }
 
         StartCoroutine(InteractCoroutine(interactionHandler));
         return true;
@@ -19,10 +27,14 @@ public class GrabbableInteractable : MonoBehaviour, IGrabbableInteractable
 
     public IEnumerator InteractCoroutine(IInteractionHandler interactionHandler)
     {
-        if (interactionHandler is not IGrabInteractionHandler grabber) yield break;
+        if (!CanInteract(interactionHandler))
+        {
+            OnFailedToInteract?.Invoke(interactionHandler);
+            yield break;
+        }
 
-        if (!grabber.TryGetGrabParent(this, out var grabParent) &&
-            !(grabber.TryAssignGrabParent(this) && grabber.TryGetGrabParent(this, out grabParent))) yield break;
+        var grabber = interactionHandler as IGrabInteractionHandler;
+        grabber.TryGetGrabParent(this, out var grabParent);
 
         yield return StartCoroutine(grabber.GrabInConstantTime ?
                                     GrabCoroutine(grabParent, 1.0f / grabber.GrabSpeed) :
@@ -84,4 +96,8 @@ public class GrabbableInteractable : MonoBehaviour, IGrabbableInteractable
         _transform.SetPositionAndRotation(grabberParent.position, grabberParent.rotation);
         _transform.SetParent(grabberParent);
     }
+
+    public bool CanInteract(IInteractionHandler interactionHandler) => interactionHandler is IGrabInteractionHandler grabber
+                                                                       && (grabber.TryGetGrabParent(this, out var _)
+                                                                           || grabber.TryAssignGrabParent(this));
 }

@@ -5,6 +5,9 @@ using Object = UnityEngine.Object;
 
 public class CyclicInteractable : MonoBehaviour, IInteractable
 {
+    [SerializeField] private InteractionLayer _interactionLayer = InteractionLayer.InteractionLayer0;
+    public InteractionLayer InteractionLayer { get => _interactionLayer; set => _interactionLayer = value; }
+
     [Serializable]
     private struct InteractableData
     {
@@ -26,7 +29,6 @@ public class CyclicInteractable : MonoBehaviour, IInteractable
         bool success = CurrentInteractable.Interactable.Interact(interactionHandler);
         bool cycle = success || !CurrentInteractable.RequireSuccessToContinueCycling;
         _currentInteractableIndex = cycle ? ++_currentInteractableIndex % _interactables.Length : _currentInteractableIndex;
-        Debug.Log("A");
         if (success)
             OnInteracted?.Invoke(interactionHandler);
         return success;

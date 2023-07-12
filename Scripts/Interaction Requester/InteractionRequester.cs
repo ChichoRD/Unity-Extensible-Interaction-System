@@ -7,10 +7,10 @@ public class InteractionRequester : MonoBehaviour, IInteractionRequester
 {
     [RequireInterface(typeof(IInteractor))]
     [SerializeField] private Object _interactorObject;
-    private IInteractor Interactor => _interactorObject as IInteractor;
+    public IInteractor Interactor => _interactorObject as IInteractor;
 
     [SerializeField] private Object[] _interactionHandlerObjects;
-    private IEnumerable<IInteractionHandler> InteractionHandlers => _interactionHandlerObjects.Cast<IInteractionHandler>();
+    public IEnumerable<IInteractionHandler> InteractionHandlers => _interactionHandlerObjects.Cast<IInteractionHandler>();
 
     [field: SerializeField] public UnityEvent<IInteractable> OnInteracted { get; private set; }
 

@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using Object = UnityEngine.Object;
 
 public class InterchangeableGrabInteractionHandler : MonoBehaviour, IGrabInteractionHandler
 {
@@ -12,12 +14,19 @@ public class InterchangeableGrabInteractionHandler : MonoBehaviour, IGrabInterac
     public bool GrabInConstantTime => GrabInteractionHandler.GrabInConstantTime;
 
     public bool TryGetGrabParent(IInteractable interactable, out Transform grabParent) => GrabInteractionHandler.TryGetGrabParent(interactable, out grabParent);
-    public bool TryFreeGrabParent(IInteractable interactable, out Transform grabParent) => GrabInteractionHandler.TryFreeGrabParent(interactable, out grabParent)
+
+    public bool TryFreeGrabParent(IInteractable interactable, out Transform grabParent) => (grabParent = null) == null
                                                                                            && interactable is Component component
-                                                                                           && component.gameObject.TryGetComponent(out IDroppableInteractable droppable)
-                                                                                           && droppable.Interact(this);
+                                                                                           && new Func<bool>(() =>
+                                                                                           {
+                                                                                               var droppable = component.GetComponentInParent<IDroppableInteractable>();
+                                                                                               return droppable != null
+                                                                                               && droppable.Interact(this)
+                                                                                               && GrabInteractionHandler.TryFreeGrabParent(interactable, out _);
+                                                                                           })();
+                                                                                           
     public bool TryAssignGrabParent(IInteractable interactable) => (GrabInteractionHandler.TryAssignGrabParent(interactable)
-                                                                   && (_lastInteractable = interactable) != null)
+                                                                    && (_lastInteractable = interactable) != null)
                                                                    || (TryFreeGrabParent(_lastInteractable, out _)
-                                                                   && TryAssignGrabParent(interactable));
+                                                                       && TryAssignGrabParent(interactable));
 }

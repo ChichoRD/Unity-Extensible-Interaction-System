@@ -13,10 +13,15 @@ public class InteractionGroupObject : ScriptableObject, IInteractionRequester
     private readonly List<IInteractionHandler> _interactionHandlers = new List<IInteractionHandler>();
 
     [field: SerializeField] public UnityEvent<IInteractable> OnInteracted { get; private set; }
+
+    public IInteractor Interactor => _interactor;
+
+    public IEnumerable<IInteractionHandler> InteractionHandlers => _interactionHandlers;
+
     public void Interact()
     {
-        var interactables = _interactor.GetInteractables();
-        var handlers = _interactionHandlers.Append(null);
+        var interactables = Interactor.GetInteractables();
+        var handlers = InteractionHandlers.Append(null);
         List<IInteractable> successfulInteractables = new List<IInteractable>();
 
         foreach (var interactable in interactables)

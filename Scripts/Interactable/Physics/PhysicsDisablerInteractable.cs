@@ -3,6 +3,9 @@ using UnityEngine.Events;
 
 public class PhysicsDisablerInteractable : MonoBehaviour, IInteractable
 {
+    [SerializeField] private InteractionLayer _interactionLayer = InteractionLayer.InteractionLayer0;
+    public InteractionLayer InteractionLayer { get => _interactionLayer; set => _interactionLayer = value; }
+
     [SerializeField] private bool _affectPhysics = true;
     [SerializeField] private bool _affectCollision = true;
 

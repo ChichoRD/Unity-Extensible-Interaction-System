@@ -12,6 +12,8 @@ public class PhysicsDroppableInteractable : MonoBehaviour, IDroppableInteractabl
     public UnityEvent<IInteractionHandler> OnInteracted => DroppableInteractable.OnInteracted;
     public Transform Transform => DroppableInteractable.Transform;
 
+    public InteractionLayer InteractionLayer { get => DroppableInteractable.InteractionLayer; set => DroppableInteractable.InteractionLayer = value; }
+
     public bool Interact(IInteractionHandler interactionHandler)
     {
         _ = _physicsEnablerInteractable == null || _physicsEnablerInteractable.Interact(interactionHandler);

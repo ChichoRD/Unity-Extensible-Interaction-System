@@ -2,6 +2,6 @@
 
 public interface IConstrainedInteractable : IInteractable
 {
-    IInteractionConstrainer InteractionConstrainer { get; }
-    UnityEvent<IInteractor> OnFailedToInteract { get; }
+    bool CanInteract(IInteractionHandler interactionHandler);
+    UnityEvent<IInteractionHandler> OnFailedToInteract { get; }
 }
