@@ -1,11 +1,13 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 public class DifferenceInteractor : MonoBehaviour, IUpdateableInteractor
 {
-    [SerializeField] private bool _listenForAddition;
-    [SerializeField] private bool _listenForRemoval;
+    [SerializeField] private bool _listenForAddition = true;
+    [SerializeField] private bool _listenForRemoval = true;
 
     [RequireInterface(typeof(IInteractor))]
     [SerializeField] private Object _interactorObject;
@@ -27,17 +29,15 @@ public class DifferenceInteractor : MonoBehaviour, IUpdateableInteractor
         _currentInteractables.UnionWith(Interactor.GetInteractables());
 
         _differentInteractables.Clear();
-        if (_listenForAddition)
+        Func<IEnumerable<IInteractable>> setDifference = (_listenForAddition, _listenForRemoval) switch
         {
-            _differentInteractables.UnionWith(_currentInteractables);
-            _differentInteractables.ExceptWith(_previousInteractables);
-        }
+            (_listenForAddition: true, _listenForRemoval: false) => () => _currentInteractables.Except(_previousInteractables),
+            (_listenForAddition: false, _listenForRemoval: true) => () => _previousInteractables.Except(_currentInteractables),
+            (_listenForAddition: true, _listenForRemoval: true) => () => _currentInteractables.Except(_previousInteractables).Union(_previousInteractables.Except(_currentInteractables)),
+            _ => () => Enumerable.Empty<IInteractable>()
+        };
 
-        if (_listenForRemoval)
-        {
-            _differentInteractables.UnionWith(_previousInteractables);
-            _differentInteractables.ExceptWith(_currentInteractables);
-        }
-        return _currentInteractables.Count;
+        _differentInteractables.UnionWith(setDifference());
+        return _differentInteractables.Count;
     }
 }

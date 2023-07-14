@@ -16,22 +16,7 @@ public class InteractionRequester : MonoBehaviour, IInteractionRequester
 
     public void Interact()
     {
-        var interactables = Interactor.GetInteractables();
-        var handlers = InteractionHandlers.Append(null);
-        List<IInteractable> successfulInteractables = new List<IInteractable>();
-
-        foreach (var interactable in interactables)
-        {
-            foreach (var interactionHandler in handlers)
-            {
-                if (interactable.Interact(interactionHandler))
-                {
-                    successfulInteractables.Add(interactable);
-                    break;
-                }
-            }
-        }
-
+        var successfulInteractables = this.InteractAndGetSuccessful();
         foreach (var interactable in successfulInteractables)
             OnInteracted?.Invoke(interactable);
     }

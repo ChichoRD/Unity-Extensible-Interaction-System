@@ -1,5 +1,7 @@
-﻿using UnityEngine.Events;
+﻿using System;
+using UnityEngine.Events;
 
+[Obsolete]
 public interface ISwitchableInteractable : IInteractable
 {
     bool StopInteracting(IInteractionHandler interactionHandler);
