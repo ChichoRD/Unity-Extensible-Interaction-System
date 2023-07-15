@@ -10,7 +10,7 @@ public class TriggerDataProvider<T> : MonoBehaviour, ITriggerDataProvider<T> whe
     [SerializeField] private T _collisionTrigger;
     public T CollisionTrigger => _collisionTrigger;
 
-    [SerializeField] private PhysicsTriggerAllocationProvider<T> _allocationProvider;
+    [SerializeField] private PhysicsTriggerAllocationProvider<T> _allocationProvider = new PhysicsTriggerAllocationProvider<T>();
     public bool UseNonAllocMemory => ((IPhysicsTriggerAllocationProvider<T>)_allocationProvider).UseNonAllocMemory;
     public HashSet<T> PhysicsObjectsMemory => ((IPhysicsTriggerAllocationProvider<T>)_allocationProvider).PhysicsObjectsMemory;
 

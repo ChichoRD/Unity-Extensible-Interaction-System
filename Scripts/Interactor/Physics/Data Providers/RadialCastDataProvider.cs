@@ -15,7 +15,7 @@ public abstract class RadialCastDataProvider<T> : MonoBehaviour, IRadialCastData
     private IPhysicsCastPositionProvider PositionProvider => _positionProviderObject as IPhysicsCastPositionProvider;
     public Vector3 InteractionPosition => PositionProvider.InteractionPosition;
 
-    [SerializeField] private PhysicsCastAllocationProvider<T> _allocationProvider;
+    [SerializeField] private PhysicsCastAllocationProvider<T> _allocationProvider = new PhysicsCastAllocationProvider<T>();
     public bool UseNonAllocMemory => ((IPhysicsCastAllocationProvider<T>)_allocationProvider).UseNonAllocMemory;
     public T[] PhysicsObjectsMemory => ((IPhysicsCastAllocationProvider<T>)_allocationProvider).PhysicsObjectsMemory;
 

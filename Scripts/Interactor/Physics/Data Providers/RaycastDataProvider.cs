@@ -30,16 +30,24 @@ public abstract class RaycastDataProvider<T> : MonoBehaviour, IRaycastDataProvid
     {
         if (DirectionProvider == null || RadialCastDataProvider == null) return;
 
-        Gizmos.color = Color.yellow;
-        var capsule = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-        Mesh capsuleMesh = capsule.GetComponent<MeshFilter>().sharedMesh;
+        try
+        {
+            Vector3 capsuleMidPoint = InteractionPosition + 0.5f * InteractionDistance * InteractionDirection;
+            Vector3 capsuleScale = new Vector3(_raycastThickness, InteractionDistance * 0.5f, _raycastThickness);
+            Quaternion capsuleRotation = Quaternion.LookRotation(Vector3.Cross(InteractionDirection, Random.onUnitSphere), InteractionDirection);
 
-        Vector3 capsuleMidPoint = InteractionPosition + 0.5f * InteractionDistance * InteractionDirection;
-        Vector3 capsuleScale = new Vector3(_raycastThickness, InteractionDistance * 0.5f, _raycastThickness);
-        Quaternion capsuleRotation = Quaternion.LookRotation(Vector3.Cross(InteractionDirection, Random.onUnitSphere), InteractionDirection);
+            Gizmos.color = Color.yellow;
+            var capsule = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            Mesh capsuleMesh = capsule.GetComponent<MeshFilter>().sharedMesh;
 
-        Gizmos.DrawWireMesh(capsuleMesh, capsuleMidPoint, capsuleRotation, capsuleScale);
-        //Gizmos.DrawRay(InteractionPosition, InteractionDirection * InteractionDistance);
-        DestroyImmediate(capsule);
+            Gizmos.DrawWireMesh(capsuleMesh, capsuleMidPoint, capsuleRotation, capsuleScale);
+            //Gizmos.DrawRay(InteractionPosition, InteractionDirection * InteractionDistance);
+            DestroyImmediate(capsule);
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning(e.Message);
+            throw;
+        }
     }
 }
