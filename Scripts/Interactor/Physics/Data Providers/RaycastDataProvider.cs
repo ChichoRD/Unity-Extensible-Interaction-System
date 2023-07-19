@@ -20,7 +20,7 @@ public abstract class RaycastDataProvider<T> : MonoBehaviour, IRaycastDataProvid
     public float InteractionDistance => RadialCastDataProvider.InteractionDistance;
     public LayerMask InteractionMask => RadialCastDataProvider.InteractionMask;
 
-    [SerializeField] private PhysicsCastAllocationProvider<T> _allocationProvider;
+    [SerializeField] private PhysicsCastAllocationProvider<T> _allocationProvider = new PhysicsCastAllocationProvider<T>();
     public bool UseNonAllocMemory => ((IPhysicsCastAllocationProvider<T>)_allocationProvider).UseNonAllocMemory;
     public T[] PhysicsObjectsMemory => ((IPhysicsCastAllocationProvider<T>)_allocationProvider).PhysicsObjectsMemory;
 
@@ -47,7 +47,7 @@ public abstract class RaycastDataProvider<T> : MonoBehaviour, IRaycastDataProvid
         catch (Exception e)
         {
             Debug.LogWarning(e.Message);
-            throw;
+            //throw;
         }
     }
 }

@@ -25,7 +25,14 @@ public abstract class RadialCastDataProvider<T> : MonoBehaviour, IRadialCastData
     {
         if (PositionProvider == null) return;
 
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(InteractionPosition, InteractionDistance);
+        try
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(InteractionPosition, InteractionDistance);
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning(e.Message);
+        }
     }
 }
