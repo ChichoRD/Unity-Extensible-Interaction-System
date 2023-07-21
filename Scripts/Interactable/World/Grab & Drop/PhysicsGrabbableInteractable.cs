@@ -4,7 +4,6 @@ using UnityEngine.Events;
 
 public class PhysicsGrabbableInteractable : MonoBehaviour, IGrabbableInteractable
 {
-    private const float GRAB_DRAG_AUGMENT = 10.0f;
     private const float ACCEPTABLE_DISTANCE = 0.1f;
 
     [RequireInterface(typeof(IGrabbableInteractable))]
@@ -33,11 +32,11 @@ public class PhysicsGrabbableInteractable : MonoBehaviour, IGrabbableInteractabl
             return false;
         }
 
-        return (!_usePhysicsGrab
-                && _physicsDisablerInteractable != null
-                && _physicsDisablerInteractable.Interact(interactionHandler)
-                && GrabbableInteractable.Interact(interactionHandler))
-               || (_grabCoroutine = StartCoroutine(InteractCoroutine(interactionHandler))) != null;
+        return (_physicsDisablerInteractable != null
+                && _physicsDisablerInteractable.Interact(interactionHandler))
+               && ((!_usePhysicsGrab
+                    && GrabbableInteractable.Interact(interactionHandler))
+                || (_grabCoroutine = StartCoroutine(InteractCoroutine(interactionHandler))) != null);
     }
 
     public IEnumerator InteractCoroutine(IInteractionHandler interactionHandler)
@@ -60,12 +59,6 @@ public class PhysicsGrabbableInteractable : MonoBehaviour, IGrabbableInteractabl
     public IEnumerator GrabCoroutine(Transform grabberParent, System.Func<float, float> getGrabSpeed)
     {
         WaitForFixedUpdate waitForFixedUpdate = new WaitForFixedUpdate();
-
-        // TODO - Move these to PhysicsEnabler/DisablerInteractable
-        RigidbodyAccessor.UseGravity = false;
-        RigidbodyAccessor.Constraints = RigidbodyConstraints.FreezeRotation;
-        RigidbodyAccessor.Drag *= GRAB_DRAG_AUGMENT;
-
         Transform.SetParent(grabberParent);
 
         float initialDistance = GetDisplacement(grabberParent).magnitude;
@@ -106,11 +99,6 @@ public class PhysicsGrabbableInteractable : MonoBehaviour, IGrabbableInteractabl
         // dx - v * dt = 0
         // dx = v * dt
         WaitForFixedUpdate waitForFixedUpdate = new WaitForFixedUpdate();
-
-        RigidbodyAccessor.UseGravity = false;
-        RigidbodyAccessor.Constraints = RigidbodyConstraints.FreezeRotation;
-        RigidbodyAccessor.Drag *= GRAB_DRAG_AUGMENT;
-
         Transform.SetParent(grabberParent);
 
         float initialDistance = GetDisplacement(grabberParent).magnitude;
@@ -154,10 +142,6 @@ public class PhysicsGrabbableInteractable : MonoBehaviour, IGrabbableInteractabl
         if (_grabCoroutine == null) return;
         StopCoroutine(_grabCoroutine);
         _grabCoroutine = null;
-
-        RigidbodyAccessor.UseGravity = true;
-        RigidbodyAccessor.Constraints = RigidbodyConstraints.None;
-        RigidbodyAccessor.Drag /= GRAB_DRAG_AUGMENT;
     }
 
     public bool CanInteract(IInteractionHandler interactionHandler)

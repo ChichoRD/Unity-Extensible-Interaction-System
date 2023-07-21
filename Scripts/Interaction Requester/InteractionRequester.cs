@@ -17,7 +17,10 @@ public class InteractionRequester : MonoBehaviour, IInteractionRequester
     public void Interact()
     {
         var successfulInteractables = this.InteractAndGetSuccessful();
-        foreach (var interactable in successfulInteractables)
+        foreach ((var interactable, var interactionHandler) in successfulInteractables)
+        {
             OnInteracted?.Invoke(interactable);
+            interactionHandler?.OnAcceptedForInteraction?.Invoke(interactable);
+        }
     }
 }

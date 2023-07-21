@@ -9,9 +9,16 @@ public class RegisterInteractor : MonoBehaviour, IInteractor
     [SerializeField] private Object _interactionRequesterObject;
     private IInteractionRequester InteractionRequester => _interactionRequesterObject as IInteractionRequester;
 
+    [SerializeField] private Object[] _initialInteractableObjects;
+    private IEnumerable<IInteractable> InitialInteractables => _initialInteractableObjects.Cast<IInteractable>();
+
     private readonly List<IInteractable> _register = new List<IInteractable>();
 
-    private void Awake() => InteractionRequester?.OnInteracted.AddListener(OnInteracted);
+    private void Awake()
+    {
+        InteractionRequester?.OnInteracted.AddListener(OnInteracted);
+        _register.AddRange(InitialInteractables);
+    }
 
     private void OnDestroy() => InteractionRequester?.OnInteracted.RemoveListener(OnInteracted);
 

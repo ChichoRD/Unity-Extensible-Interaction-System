@@ -3,11 +3,11 @@ using System.Linq;
 
 public static class InteractionRequesterExtensions
 {
-    public static IEnumerable<IInteractable> InteractAndGetSuccessful(this IInteractionRequester interactionRequester)
+    public static IEnumerable<(IInteractable, IInteractionHandler)> InteractAndGetSuccessful(this IInteractionRequester interactionRequester)
     {
         var interactables = interactionRequester.Interactor.GetInteractables();
         var handlers = interactionRequester.InteractionHandlers.Prepend(null);
-        List<IInteractable> successfulInteractables = new List<IInteractable>();
+        var successfulInteractables = new List<(IInteractable, IInteractionHandler)>();
 
         foreach (var interactable in interactables)
         {
@@ -15,8 +15,7 @@ public static class InteractionRequesterExtensions
             {
                 if (interactable.Interact(interactionHandler))
                 {
-                    successfulInteractables.Add(interactable);
-                    interactionHandler?.OnAcceptedForInteraction?.Invoke(interactable);
+                    successfulInteractables.Add((interactable, interactionHandler));
                     break;
                 }
             }
