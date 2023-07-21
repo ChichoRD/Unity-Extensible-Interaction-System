@@ -57,10 +57,10 @@ public class GrabbableInteractable : MonoBehaviour, IGrabbableInteractable
             float distance = Vector3.Distance(_transform.position, grabberParent.position);
             float angle = Quaternion.Angle(_transform.rotation, grabberParent.rotation);
 
-            float nT = Mathf.Max(distance / (initialDistance + THRESHOLD),
-                                 angle / (initialAngle + THRESHOLD));
+            float nT = 1.0f - Mathf.Max(distance / (initialDistance + THRESHOLD),
+                                        angle / (initialAngle + THRESHOLD));
 
-            if (nT < THRESHOLD) break;
+            if (nT > 1.0f - THRESHOLD) break;
 
             float instantGrabSpeed = getGrabSpeed(nT);
             float dx = instantGrabSpeed * Time.deltaTime;

@@ -1,4 +1,6 @@
+using UnityEngine.Events;
+
 public interface IInteractionHandler
 {
-    //bool OnInteractionRequest(IInteractable interactable);
+    UnityEvent<IInteractable> OnAcceptedForInteraction { get; }
 }

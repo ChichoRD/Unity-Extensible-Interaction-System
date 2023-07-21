@@ -8,6 +8,7 @@ public class PhysicsDroppableInteractable : MonoBehaviour, IDroppableInteractabl
     private IDroppableInteractable DroppableInteractable => _droppableInteractableObject as IDroppableInteractable;
 
     [SerializeField] private PhysicsEnablerInteractable _physicsEnablerInteractable;
+    [SerializeField] private PhysicsGrabbableInteractable _physicsGrabbableInteractable;
 
     public UnityEvent<IInteractionHandler> OnInteracted => DroppableInteractable.OnInteracted;
     public Transform Transform => DroppableInteractable.Transform;
@@ -16,6 +17,9 @@ public class PhysicsDroppableInteractable : MonoBehaviour, IDroppableInteractabl
 
     public bool Interact(IInteractionHandler interactionHandler)
     {
+        if (_physicsGrabbableInteractable != null)
+            _physicsGrabbableInteractable.StopGrabbing();
+
         _ = _physicsEnablerInteractable == null || _physicsEnablerInteractable.Interact(interactionHandler);
         return DroppableInteractable.Interact(interactionHandler);
     }

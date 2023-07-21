@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Events;
 using Object = UnityEngine.Object;
 
 public class InterchangeableGrabInteractionHandler : MonoBehaviour, IGrabInteractionHandler
@@ -12,6 +13,8 @@ public class InterchangeableGrabInteractionHandler : MonoBehaviour, IGrabInterac
 
     public float GrabSpeed => GrabInteractionHandler.GrabSpeed;
     public bool GrabInConstantTime => GrabInteractionHandler.GrabInConstantTime;
+
+    public UnityEvent<IInteractable> OnAcceptedForInteraction => GrabInteractionHandler.OnAcceptedForInteraction;
 
     public bool TryGetGrabParent(IInteractable interactable, out Transform grabParent) => GrabInteractionHandler.TryGetGrabParent(interactable, out grabParent);
 

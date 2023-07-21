@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class GrabInteractionHandler : MonoBehaviour, IGrabInteractionHandler
 {
@@ -10,6 +11,8 @@ public class GrabInteractionHandler : MonoBehaviour, IGrabInteractionHandler
 
     public float GrabSpeed => 1.0f / _grabTime;
     public bool GrabInConstantTime => _grabInConstantTime;
+
+    [field: SerializeField] public UnityEvent<IInteractable> OnAcceptedForInteraction { get; private set; }
 
     public bool TryFreeGrabParent(IInteractable interactable, out Transform grabParent) => _interactableToGrabParentMap.Remove(interactable, out grabParent);
     public bool TryGetGrabParent(IInteractable interactable, out Transform grabParent) => _interactableToGrabParentMap.TryGetValue(interactable, out grabParent);
