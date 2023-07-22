@@ -11,6 +11,7 @@ public class RaycastInteractor3D : MonoBehaviour, IInteractor
     public IEnumerable<IInteractable> GetInteractables()
     {
         return RaycastDataProvider.GetRaycastFunction()()
+            .Where(hit => hit.collider != null)
             .SelectMany(hit => hit.collider.gameObject.GetComponents<IInteractable>())
             .Where(interactable => interactable != null);
     }

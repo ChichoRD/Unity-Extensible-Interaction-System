@@ -36,7 +36,7 @@ public class PhysicsGrabbableInteractable : MonoBehaviour, IGrabbableInteractabl
                 && _physicsDisablerInteractable.Interact(interactionHandler))
                && ((!_usePhysicsGrab
                     && GrabbableInteractable.Interact(interactionHandler))
-                || (_grabCoroutine = StartCoroutine(InteractCoroutine(interactionHandler))) != null);
+                || (_grabCoroutine ??= StartCoroutine(InteractCoroutine(interactionHandler))) != null);
     }
 
     public IEnumerator InteractCoroutine(IInteractionHandler interactionHandler)
@@ -50,10 +50,10 @@ public class PhysicsGrabbableInteractable : MonoBehaviour, IGrabbableInteractabl
         var grabber = interactionHandler as IGrabInteractionHandler;
         grabber.TryGetGrabParent(GrabbableInteractable, out var grabParent);
 
+        OnInteracted?.Invoke(interactionHandler);
         yield return StartCoroutine(grabber.GrabInConstantTime ?
                                     GrabCoroutine(grabParent, 1.0f / grabber.GrabSpeed) :
                                     GrabCoroutine(grabParent, (t) => grabber.GrabSpeed));
-        OnInteracted?.Invoke(interactionHandler);
     }           
 
     public IEnumerator GrabCoroutine(Transform grabberParent, System.Func<float, float> getGrabSpeed)

@@ -281,6 +281,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _performComponentSearch: 1
   _interactionRequesterObject: {fileID: 3620366565857309586}
+  _initialInteractableObjects: []
 --- !u!1 &4679359050604290168
 GameObject:
   m_ObjectHideFlags: 0
@@ -304,8 +305,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4679359050604290168}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 60.85668, y: 1.4647717, z: 38.076473}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -946,6 +947,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7962422361733740290}
     m_Modifications:
+    - target: {fileID: 6657219551145880271, guid: b7e9cf44b78eb5243967c95482be0c6b,
+        type: 3}
+      propertyPath: _allocationProvider._useNonAllocMemory
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6657219552553211319, guid: b7e9cf44b78eb5243967c95482be0c6b,
         type: 3}
       propertyPath: _cameraTransform

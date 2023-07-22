@@ -11,6 +11,7 @@ public class RadialInteractor3D : MonoBehaviour, IInteractor
     public IEnumerable<IInteractable> GetInteractables()
     {
         return RadialCastDataProvider.GetRadialCastFunction()()
+            .Where(collider => collider != null)
             .SelectMany(collider => collider.gameObject.GetComponents<IInteractable>())
             .Where(interactable => interactable != null);
     }

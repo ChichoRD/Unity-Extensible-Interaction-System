@@ -18,12 +18,14 @@ public class RaycastDataProvider3D : RaycastDataProvider<RaycastHit>
         {
             (useCircleCast: true, useNonAllocCast: true) => () =>
             {
+                Array.Clear(PhysicsObjectsMemory, 0, PhysicsObjectsMemory.Length);
                 Physics.SphereCastNonAlloc(raycastOrigin, raycastThickness, raycastDirection, PhysicsObjectsMemory, raycastDistance, interactionMask);
                 return PhysicsObjectsMemory;
             },
             (useCircleCast: true, useNonAllocCast: false) => () => Physics.SphereCastAll(raycastOrigin, raycastThickness, raycastDirection, raycastDistance, interactionMask),
             (useCircleCast: false, useNonAllocCast: true) => () =>
             {
+                Array.Clear(PhysicsObjectsMemory, 0, PhysicsObjectsMemory.Length);
                 Physics.RaycastNonAlloc(raycastOrigin, raycastDirection, PhysicsObjectsMemory, raycastDistance, interactionMask);
                 return PhysicsObjectsMemory;
             },

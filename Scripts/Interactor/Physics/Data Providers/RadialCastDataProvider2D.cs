@@ -13,6 +13,7 @@ public class RadialCastDataProvider2D : RadialCastDataProvider<Collider2D>
         return useNonAllocMemory ?
             () =>
             {
+                Array.Clear(PhysicsObjectsMemory, 0, PhysicsObjectsMemory.Length);
                 Physics2D.OverlapCircleNonAlloc(circleCentre, circleRadius, PhysicsObjectsMemory, interactionMask);
                 return PhysicsObjectsMemory;
             } :

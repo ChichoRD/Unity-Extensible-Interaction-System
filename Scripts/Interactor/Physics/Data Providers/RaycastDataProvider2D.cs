@@ -18,12 +18,14 @@ public class RaycastDataProvider2D : RaycastDataProvider<RaycastHit2D>
         {
             (useCircleCast: true, useNonAllocCast: true) => () =>
             {
+                Array.Clear(PhysicsObjectsMemory, 0, PhysicsObjectsMemory.Length);
                 Physics2D.CircleCastNonAlloc(raycastOrigin, raycastThickness, raycastDirection, PhysicsObjectsMemory, raycastDistance, interactionMask);
                 return PhysicsObjectsMemory;
             },
             (useCircleCast: true, useNonAllocCast: false) => () => Physics2D.CircleCastAll(raycastOrigin, raycastThickness, raycastDirection, raycastDistance, interactionMask),
             (useCircleCast: false, useNonAllocCast: true) => () =>
             {
+                Array.Clear(PhysicsObjectsMemory, 0, PhysicsObjectsMemory.Length);
                 Physics2D.RaycastNonAlloc(raycastOrigin, raycastDirection, PhysicsObjectsMemory, raycastDistance, interactionMask);
                 return PhysicsObjectsMemory;
             },
