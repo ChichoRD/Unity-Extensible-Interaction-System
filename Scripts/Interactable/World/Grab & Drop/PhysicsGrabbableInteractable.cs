@@ -11,7 +11,7 @@ public class PhysicsGrabbableInteractable : MonoBehaviour, IGrabbableInteractabl
     private IGrabbableInteractable GrabbableInteractable => _grabbableInteractableObject as IGrabbableInteractable;
 
     [SerializeField] private bool _usePhysicsGrab = true;
-    [SerializeField] [Range(0.0f, 1.0f)] private float _grabForceFactor = 0.15f;
+    [SerializeField] [Range(0.0f, 1.0f)] private float _grabForceFactor = 0.95f;
     [SerializeField] private PhysicsDisablerInteractable _physicsDisablerInteractable;
     [RequireInterface(typeof(IRigidbodyAccessor))]
     [SerializeField] private Object _rigidbodyAccessorObject;
@@ -34,9 +34,7 @@ public class PhysicsGrabbableInteractable : MonoBehaviour, IGrabbableInteractabl
 
         return (_physicsDisablerInteractable != null
                 && _physicsDisablerInteractable.Interact(interactionHandler))
-               && ((!_usePhysicsGrab
-                    && GrabbableInteractable.Interact(interactionHandler))
-                || (_grabCoroutine ??= StartCoroutine(InteractCoroutine(interactionHandler))) != null);
+                && (_grabCoroutine ??= StartCoroutine(InteractCoroutine(interactionHandler))) != null;
     }
 
     public IEnumerator InteractCoroutine(IInteractionHandler interactionHandler)
@@ -44,43 +42,33 @@ public class PhysicsGrabbableInteractable : MonoBehaviour, IGrabbableInteractabl
         if (!CanInteract(interactionHandler))
         {
             OnFailedToInteract?.Invoke(interactionHandler);
+            _grabCoroutine = null;
+            yield break;
+        }
+
+        yield return GrabbableInteractable.InteractCoroutine(interactionHandler);
+        if (!_usePhysicsGrab)
+        {
+            _grabCoroutine = null;
             yield break;
         }
 
         var grabber = interactionHandler as IGrabInteractionHandler;
         grabber.TryGetGrabParent(GrabbableInteractable, out var grabParent);
-
-        OnInteracted?.Invoke(interactionHandler);
-        yield return StartCoroutine(grabber.GrabInConstantTime ?
-                                    GrabCoroutine(grabParent, 1.0f / grabber.GrabSpeed) :
-                                    GrabCoroutine(grabParent, (t) => grabber.GrabSpeed));
+        yield return SustainGrabCoroutine(grabParent);
     }           
 
     public IEnumerator GrabCoroutine(Transform grabberParent, System.Func<float, float> getGrabSpeed)
     {
-        WaitForFixedUpdate waitForFixedUpdate = new WaitForFixedUpdate();
-        Transform.SetParent(grabberParent);
-
-        float initialDistance = GetDisplacement(grabberParent).magnitude;
-        float distance = initialDistance;
-
-        while (distance > ACCEPTABLE_DISTANCE)
-        {
-            const float THRESHOLD = 0.001f;
-            distance = GetDisplacement(grabberParent).magnitude;
-            float nT = 1.0f - distance / (initialDistance + THRESHOLD);
-            var displacement = GetDisplacement(grabberParent);
-            Vector3 force = GetForceToDisplaceOverTime(RigidbodyAccessor.Mass, displacement.normalized * initialDistance * Time.fixedDeltaTime, RigidbodyAccessor.Velocity - RigidbodyAccessor.Velocity.normalized * getGrabSpeed(nT), Time.fixedDeltaTime)
-                            * _grabForceFactor;
-
-            RigidbodyAccessor.AddForce(force);
-            yield return waitForFixedUpdate;
-        }
-
-        yield return SustainGrab(grabberParent);
+        yield return GrabbableInteractable.GrabCoroutine(grabberParent, getGrabSpeed);
     }
 
     public IEnumerator GrabCoroutine(Transform grabberParent, float grabTotalTime)
+    {
+        yield return GrabbableInteractable.GrabCoroutine(grabberParent, grabTotalTime);
+    }
+
+    private IEnumerator SustainGrabCoroutine(Transform grabberParent)
     {
         // v * dt = dx
         // F * dt = m * dv
@@ -98,30 +86,11 @@ public class PhysicsGrabbableInteractable : MonoBehaviour, IGrabbableInteractabl
         // If dv = 0
         // dx - v * dt = 0
         // dx = v * dt
-        WaitForFixedUpdate waitForFixedUpdate = new WaitForFixedUpdate();
-        Transform.SetParent(grabberParent);
 
-        float initialDistance = GetDisplacement(grabberParent).magnitude;
-
-        for (float t = 0.0f; t < grabTotalTime; t += Time.fixedDeltaTime)
-        {
-            var displacement = GetDisplacement(grabberParent);
-            Vector3 force = GetForceToDisplaceOverTime(RigidbodyAccessor.Mass, displacement.normalized * initialDistance, RigidbodyAccessor.Velocity, grabTotalTime)
-                            * _grabForceFactor;
-
-            RigidbodyAccessor.AddForce(force);
-            yield return waitForFixedUpdate;
-        }
-
-        yield return SustainGrab(grabberParent);
-    }
-
-    private IEnumerator SustainGrab(Transform grabberParent)
-    {
         WaitForFixedUpdate waitForFixedUpdate = new WaitForFixedUpdate();
         const int FRAMES_TO_SUSTAIN = 5;
 
-        while (true)
+        while (RigidbodyAccessor != null)
         {
             var displacement = GetDisplacement(grabberParent);
             Vector3 force = GetForceToDisplaceOverTime(RigidbodyAccessor.Mass, Step(ACCEPTABLE_DISTANCE, displacement.magnitude) * displacement, RigidbodyAccessor.Velocity, Time.fixedDeltaTime * FRAMES_TO_SUSTAIN)
@@ -136,8 +105,7 @@ public class PhysicsGrabbableInteractable : MonoBehaviour, IGrabbableInteractabl
     private float Step(float s, float x) => s > x ? 0.0f : 1.0f;
     private Vector3 GetForceToDisplaceOverTime(float m, Vector3 dx, Vector3 v, float dt) => m * (dx - v * dt) / (dt * dt);
 
-
-    public void StopGrabbing()
+    public void StopGrabCoroutine()
     {
         if (_grabCoroutine == null) return;
         StopCoroutine(_grabCoroutine);

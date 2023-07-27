@@ -18,7 +18,7 @@ public class PhysicsDroppableInteractable : MonoBehaviour, IDroppableInteractabl
     public bool Interact(IInteractionHandler interactionHandler)
     {
         if (_physicsGrabbableInteractable != null)
-            _physicsGrabbableInteractable.StopGrabbing();
+            _physicsGrabbableInteractable.StopGrabCoroutine();
 
         _ = _physicsEnablerInteractable == null || _physicsEnablerInteractable.Interact(interactionHandler);
         return DroppableInteractable.Interact(interactionHandler);

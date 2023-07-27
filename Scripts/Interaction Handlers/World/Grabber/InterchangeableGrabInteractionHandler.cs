@@ -35,7 +35,7 @@ public class InterchangeableGrabInteractionHandler : MonoBehaviour, IGrabInterac
     private bool TryDrop(IInteractable interactable) => interactable is Component component
                                                         && new Func<bool>(() =>
                                                         {
-                                                            var droppable = component.GetComponentInParent<IDroppableInteractable>();
+                                                            var droppable = component.GetComponentInParent<IDroppableInteractable>(true);
                                                             return droppable != null
                                                                    && droppable.Interact(this);
                                                         })();

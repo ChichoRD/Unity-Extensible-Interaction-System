@@ -48,7 +48,7 @@ MonoBehaviour:
   _interactionLayer: 0
   _prefab: {fileID: 0}
   _parentInstance: 0
-  _instanciationTransform: {fileID: 1433979426031470965}
+  _instantiationTransform: {fileID: 1433979426031470965}
   <OnInteracted>k__BackingField:
     m_PersistentCalls:
       m_Calls: []

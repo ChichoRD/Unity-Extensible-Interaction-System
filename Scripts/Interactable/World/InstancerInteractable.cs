@@ -13,8 +13,10 @@ public class InstancerInteractable : MonoBehaviour, IInteractable
 
     public bool Interact(IInteractionHandler interactionHandler)
     {
-        Instantiate(_prefab, _instantiationTransform.position, _instantiationTransform.rotation, _parentInstance ? _instantiationTransform : null);
+        Instantiate();
         OnInteracted?.Invoke(interactionHandler);
         return true;
     }
+
+    public void Instantiate() => Instantiate(_prefab, _instantiationTransform.position, _instantiationTransform.rotation, _parentInstance ? _instantiationTransform : null);
 }
